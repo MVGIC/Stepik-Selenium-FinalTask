@@ -11,9 +11,18 @@ class ProductPage(BasePage):
         button_to_add = self.browser.find_element(*ProductPageLocators.BUTTON_TO_ADD)
         button_to_add.click()
 
-    def should_be_product_name(self):
-        assert "The shellcoder's handbook" in self.browser.find_element(
-            *ProductPageLocators.ADD_MESSAGE).text, "The name is not equal"
+    def find_product_name(self):
+        product_name = self.browser.find_element(*ProductPageLocators.PRODUCT_NAME).text
+        return product_name
 
-    def should_be_price(self):
-        assert "9,99 £" in self.browser.find_element(*ProductPageLocators.PRICE_MESSAGE).text, "The price is not equal"
+    def find_product_price(self):
+        product_price = self.browser.find_element(*ProductPageLocators.PRODUCT_PRICE).text
+        return product_price
+
+    def should_be_product_name_in_cart(self, product_name):
+        assert product_name == self.browser.find_element(
+            *ProductPageLocators.PRODUCT_ADDED_TO_CART_MESSAGE).text, "The name is not equal"
+
+    def should_be_price_in_cart(self, product_price):
+        assert product_price == self.browser.find_element(
+            *ProductPageLocators.CART_PRICE_AFTER_ADDING_MESSAGE).text, "The price is not equal"
