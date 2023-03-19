@@ -4,9 +4,6 @@ from pages.locators import ProductPageLocators
 
 class ProductPage(BasePage):
 
-    def should_be_button_to_add(self):
-        assert self.is_element_present(*ProductPageLocators.BUTTON_TO_ADD)
-
     def add_to_basket_product(self):
         button_to_add = self.browser.find_element(*ProductPageLocators.BUTTON_TO_ADD)
         button_to_add.click()
@@ -19,6 +16,13 @@ class ProductPage(BasePage):
         product_price = self.browser.find_element(*ProductPageLocators.PRODUCT_PRICE).text
         return product_price
 
+    def should_be_button_to_add(self):
+        assert self.is_element_present(*ProductPageLocators.BUTTON_TO_ADD)
+
+    def should_be_disappeared_success_message(self):
+        assert self.is_disappeared(*ProductPageLocators.PRODUCT_ADDED_TO_BASKET_MESSAGE), \
+            "Success message is not disappeared, but should be"
+
     def should_be_product_name_in_basket(self, product_name):
         assert product_name == self.browser.find_element(
             *ProductPageLocators.PRODUCT_ADDED_TO_BASKET_MESSAGE).text, "The name is not equal"
@@ -30,7 +34,3 @@ class ProductPage(BasePage):
     def should_not_be_success_message(self):
         assert self.is_not_element_present(*ProductPageLocators.PRODUCT_ADDED_TO_BASKET_MESSAGE), \
             "Success message is presented, but should not be"
-
-    def should_be_disappeared_success_message(self):
-        assert self.is_disappeared(*ProductPageLocators.PRODUCT_ADDED_TO_BASKET_MESSAGE), \
-            "Success message is not disappeared, but should be"
