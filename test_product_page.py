@@ -1,8 +1,42 @@
+import random
+import string
+import time
+
 import pytest
 
 from pages.basket_page import BasketPage
 from pages.login_page import LoginPage
 from pages.product_page import ProductPage
+
+
+@pytest.mark.register_user
+class TestUserAddToBasketFromProductPage():
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        link = "https://selenium1py.pythonanywhere.com/ru/accounts/login/"
+        page = LoginPage(browser, link)
+        page.open()
+        N = 20
+        allowedChars = string.ascii_letters + string.digits + string.punctuation
+        email_generate = str(time.time()) + "@fakemail.org"
+        password_generate = ''.join(random.choice(allowedChars) for _ in range(N))
+        page.register_new_user(email_generate, password_generate)
+        page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, browser):
+        link = "https://selenium1py.pythonanywhere.com/ru/catalogue/coders-at-work_207/"
+        page = ProductPage(browser, link, 10)
+        page.open()
+        page.should_not_be_success_message()
+
+    def test_user_can_add_product_to_basket(self, browser):
+        link = "https://selenium1py.pythonanywhere.com/ru/catalogue/coders-at-work_207/"
+        page = ProductPage(browser, link, 10)
+        page.open()
+        page.should_be_button_to_add()
+        page.add_to_basket_product()
+        page.should_be_product_name_in_basket(page.find_product_name())
+        page.should_be_product_price_in_basket(page.find_product_price())
 
 
 @pytest.mark.skip(reason="for another task")
@@ -79,8 +113,3 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     basket_page = BasketPage(browser, link, 4)
     basket_page.should_not_be_product_in_basket()
     basket_page.should_be_empty_basket_message()
-
-# Гость открывает страницу товара
-# Переходит в корзину по кнопке в шапке
-# Ожидаем, что в корзине нет товаров
-# Ожидаем, что есть текст о том что корзина пуста
